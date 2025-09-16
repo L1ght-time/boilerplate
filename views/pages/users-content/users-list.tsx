@@ -1,8 +1,8 @@
 import { getUsers } from "~/lib/server/users";
-import { TableSection } from "~/views/pages/users-content/table-section";
+import { UsersTableSection } from "~/views/pages/users-content/users-table-section";
 
 export const UsersList = async () => {
   const users = await getUsers();
 
-  return <TableSection users={users} />;
+  return <UsersTableSection users={users} />;
 };
