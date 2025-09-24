@@ -1,6 +1,10 @@
 "use client";
 
-import { ColumnDef, getCoreRowModel } from "@tanstack/react-table";
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getPaginationRowModel,
+} from "@tanstack/react-table";
 import { useState } from "react";
 import { User } from "~/types/entities/user";
 import { DataTable } from "~/views/components/data-table/data-table";
@@ -63,9 +67,14 @@ export const UsersTableSection = (props: UsersTableSectionProps) => {
   const { users } = props;
 
   const [rowSelection, setRowSelection] = useState({});
+  // const [pagination, setPagination] = useState({
+  //   pageIndex: 0, //initial page index
+  //   pageSize: 10, //default page size
+  // });
 
   const options = {
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
     state: { rowSelection },
   };

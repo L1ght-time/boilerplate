@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-table";
 
 import { Table as TableType } from "@tanstack/table-core";
+import { Button } from "~/views/components/ui/button";
 
 import {
   Table,
@@ -35,10 +36,30 @@ export const DataTable = <TData, TValue>(
   });
 
   return (
-    <Table>
-      <DataTableHeader table={table} />
-      <DataTableBody table={table} />
-    </Table>
+    <div>
+      <Table>
+        <DataTableHeader table={table} />
+        <DataTableBody table={table} />
+      </Table>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
   );
 };
 
