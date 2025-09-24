@@ -1,22 +1,10 @@
 "use client";
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useState } from "react";
 import { User } from "~/types/entities/user";
+import { DataTable } from "~/views/components/data-table/data-table";
 import { Checkbox } from "~/views/components/ui/checkbox";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/views/components/ui/table";
 
 const columns: ColumnDef<User>[] = [
   {
@@ -67,74 +55,24 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
-type UsersTableSectionProps = React.JSX.IntrinsicElements["table"] & {
+type UsersTableSectionProps = {
   users: User[];
 };
 
 export const UsersTableSection = (props: UsersTableSectionProps) => {
-  const { users, ...rest } = props;
+  const { users } = props;
 
   const [rowSelection, setRowSelection] = useState({});
 
-  const table = useReactTable({
-    data: users,
-    columns,
+  const options = {
     getCoreRowModel: getCoreRowModel(),
     onRowSelectionChange: setRowSelection,
     state: { rowSelection },
-  });
+  };
 
   return (
     <div className="overflow-hidden rounded-md border">
-      <Table {...rest}>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => {
-              console.log({ row });
-
-              return (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              );
-            })
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <DataTable data={users} columns={columns} {...options} />
     </div>
   );
 };
