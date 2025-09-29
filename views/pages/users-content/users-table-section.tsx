@@ -79,9 +79,5 @@ export const UsersTableSection = (props: UsersTableSectionProps) => {
     state: { rowSelection },
   };
 
-  return (
-    <div className="overflow-hidden rounded-md border">
-      <DataTable data={users} columns={columns} {...options} />
-    </div>
-  );
+  return <DataTable data={users} columns={columns} {...options} />;
 };

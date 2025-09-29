@@ -8,6 +8,13 @@ import {
 } from "@tanstack/react-table";
 
 import { Table as TableType } from "@tanstack/table-core";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { createContext, useContext } from "react";
 import { Button } from "~/views/components/ui/button";
 
 import {
@@ -24,6 +31,16 @@ type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
 } & TableOptions<TData>;
 
+const DataTableContext = createContext({});
+
+export const useDataTable = <TData,>() => {
+  const ctx = useContext(DataTableContext);
+  if (!ctx) {
+    throw new Error("useDataTable must be used within DataTableProvider");
+  }
+  return ctx as TableType<TData>;
+};
+
 export const DataTable = <TData, TValue>(
   props: DataTableProps<TData, TValue>
 ) => {
@@ -36,42 +53,26 @@ export const DataTable = <TData, TValue>(
   });
 
   return (
-    <div>
-      <Table>
-        <DataTableHeader table={table} />
-        <DataTableBody table={table} />
-      </Table>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+    <DataTableContext.Provider value={table}>
+      <div>
+        <div className="overflow-hidden rounded-md border">
+          <Table>
+            <DataTableHeader />
+            <DataTableBody />
+          </Table>
+        </div>
+
+        <DataTableNavigation />
       </div>
-    </div>
+    </DataTableContext.Provider>
   );
 };
 
-type DataTableHeaderProps<TData> = React.JSX.IntrinsicElements["thead"] & {
-  table: TableType<TData>;
-};
-
-const DataTableHeader = <TData,>(props: DataTableHeaderProps<TData>) => {
-  const { table, ...rest } = props;
+const DataTableHeader = () => {
+  const table = useDataTable();
 
   return (
-    <TableHeader {...rest}>
+    <TableHeader>
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
@@ -86,17 +87,13 @@ const DataTableHeader = <TData,>(props: DataTableHeaderProps<TData>) => {
   );
 };
 
-type DataTableBodyProps<TData> = React.JSX.IntrinsicElements["tbody"] & {
-  table: TableType<TData>;
-};
-
-const DataTableBody = <TData,>(props: DataTableBodyProps<TData>) => {
-  const { table, ...rest } = props;
+const DataTableBody = () => {
+  const table = useDataTable();
 
   const columnsCount = table.getAllColumns().length;
 
   return (
-    <TableBody {...rest}>
+    <TableBody>
       {table.getRowModel().rows?.length ? (
         table.getRowModel().rows.map((row) => (
           <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
@@ -127,5 +124,53 @@ const DataTableEmpty = (props: DataTableEmptyProps) => {
         {children || "No results."}
       </TableCell>
     </TableRow>
+  );
+};
+
+const DataTableNavigation = () => {
+  const table = useDataTable();
+
+  return (
+    <div className={"flex items-center space-x-2"}>
+      <Button
+        variant="outline"
+        size="icon"
+        className="size-8"
+        onClick={() => table.setPageIndex(0)}
+        disabled={!table.getCanPreviousPage()}
+      >
+        <ChevronsLeft />
+      </Button>
+      <Button
+        variant="outline"
+        size="icon"
+        className="size-8"
+        onClick={() => table.previousPage()}
+        disabled={!table.getCanPreviousPage()}
+      >
+        <ChevronLeft />
+      </Button>
+      <Button
+        variant="outline"
+        size="icon"
+        className="size-8"
+        onClick={() => table.nextPage()}
+        disabled={!table.getCanNextPage()}
+      >
+        <ChevronRight />
+      </Button>
+      <Button
+        variant="outline"
+        size="icon"
+        className="size-8"
+        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+        disabled={!table.getCanNextPage()}
+      >
+        <ChevronsRight />
+      </Button>
+      <div>
+        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+      </div>
+    </div>
   );
 };
