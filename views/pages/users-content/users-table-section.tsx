@@ -5,7 +5,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { usePagination } from "~/lib/hooks/use-pagination";
 import { User } from "~/types/entities/user";
 import { DataTable } from "~/views/components/data-table/data-table";
 import { Checkbox } from "~/views/components/ui/checkbox";
@@ -66,17 +66,14 @@ type UsersTableSectionProps = {
 export const UsersTableSection = (props: UsersTableSectionProps) => {
   const { users } = props;
 
-  const [rowSelection, setRowSelection] = useState({});
-  // const [pagination, setPagination] = useState({
-  //   pageIndex: 0, //initial page index
-  //   pageSize: 10, //default page size
-  // });
+  const { pagination, setPagination } = usePagination<User>(users);
 
   const options = {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onRowSelectionChange: setRowSelection,
-    state: { rowSelection },
+    onPaginationChange: setPagination,
+    autoResetPageIndex: false,
+    state: { pagination },
   };
 
   return <DataTable data={users} columns={columns} {...options} />;
