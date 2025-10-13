@@ -6,29 +6,40 @@ export const usePagination = <T>(data: T[]) => {
   const searchParams = useSearchParams();
   const { set } = useSearchParamsActions();
   const pageIndex = Number(searchParams.get("page")) || 1;
-  const normalizedPageIndex = Math.max(pageIndex - 1, 0);
+  const normalizedToMinPageIndex = Math.max(pageIndex - 1, 0);
 
   const [pagination, setPagination] = useState({
-    pageIndex: normalizedPageIndex,
+    pageIndex: normalizedToMinPageIndex,
     pageSize: 10,
   });
 
   const totalPages = Math.ceil(data.length / pagination.pageSize);
+  const maxPageIndex = Math.max(0, totalPages - 1);
+
+  const normalizedToMaxPageIndex = Math.min(
+    normalizedToMinPageIndex,
+    maxPageIndex
+  );
 
   useEffect(() => {
-    const maxPageIndex = Math.max(0, totalPages - 1);
-
-    if (pagination.pageIndex < 0 || pagination.pageIndex > maxPageIndex) {
-      const correctedPage = Math.min(normalizedPageIndex, maxPageIndex);
-
-      setPagination((prev) => ({ ...prev, pageIndex: correctedPage }));
-      set("page", (correctedPage + 1).toString());
+    if (pagination.pageIndex > maxPageIndex) {
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: normalizedToMaxPageIndex,
+      }));
+      return;
     }
-  }, [normalizedPageIndex, pagination.pageIndex, set, totalPages]);
 
-  useEffect(() => {
     set("page", (pagination.pageIndex + 1).toString());
-  }, [pagination.pageIndex, set]);
+  }, [
+    maxPageIndex,
+    normalizedToMaxPageIndex,
+    normalizedToMinPageIndex,
+    pageIndex,
+    pagination.pageIndex,
+    set,
+    totalPages,
+  ]);
 
   return { pagination, setPagination };
 };
