@@ -9,6 +9,7 @@ export const useSearchParamsActions = () => {
   const set = useCallback(
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
+
       params.set(key, value);
 
       router.replace(`${pathname}?${params.toString()}`);
@@ -16,7 +17,22 @@ export const useSearchParamsActions = () => {
     [pathname, router, searchParams]
   );
 
-  // const merge = useCallback(() => {}, []);
+  const merge = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-  return { set };
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === null) {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      }
+
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams]
+  );
+
+  return { set, merge };
 };

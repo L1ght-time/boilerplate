@@ -2,23 +2,22 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
 
-const pageSize = 10;
-
 export const usePagination = <T>(data: T[]) => {
   const searchParams = useSearchParams();
-  const { set } = useSearchParamsActions();
+  const { merge } = useSearchParamsActions();
 
+  const pageSize = Number(searchParams.get("pageSize"));
   const pageIndexFromUrl = Number(searchParams.get("page")) || 1;
   const currentPageIndex = Math.max(pageIndexFromUrl - 1, 0);
 
-  const totalPages = Math.ceil(data.length / pageSize);
+  const totalPages = Math.ceil(data.length / Number(pageSize));
   const lastPageIndex = totalPages - 1;
 
   const normalizedPageIndex = Math.min(currentPageIndex, lastPageIndex);
 
   const [pagination, setPagination] = useState({
     pageIndex: normalizedPageIndex,
-    pageSize,
+    pageSize: pageSize ? pageSize : 10,
   });
 
   useEffect(() => {
@@ -30,15 +29,19 @@ export const usePagination = <T>(data: T[]) => {
       return;
     }
 
-    set("page", (pagination.pageIndex + 1).toString());
+    merge({
+      page: (pagination.pageIndex + 1).toString(),
+      pageSize: pagination.pageSize.toString(),
+    });
   }, [
     lastPageIndex,
     normalizedPageIndex,
     currentPageIndex,
     pageIndexFromUrl,
     pagination,
-    set,
+    merge,
     totalPages,
+    pageSize,
   ]);
 
   return { pagination, setPagination };

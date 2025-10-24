@@ -6,7 +6,6 @@ import {
   TableOptions,
   useReactTable,
 } from "@tanstack/react-table";
-
 import { Table as TableType } from "@tanstack/table-core";
 import {
   ChevronLeft,
@@ -14,8 +13,16 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
 import { Button } from "~/views/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/views/components/ui/select";
 
 import {
   Table,
@@ -61,7 +68,6 @@ export const DataTable = <TData, TValue>(
             <DataTableBody />
           </Table>
         </div>
-
         <DataTableNavigation />
       </div>
     </DataTableContext.Provider>
@@ -127,8 +133,17 @@ const DataTableEmpty = (props: DataTableEmptyProps) => {
   );
 };
 
+const rowsCountOnPage = [10, 20, 30, 40, 50];
+
 const DataTableNavigation = () => {
+  const { set } = useSearchParamsActions();
   const table = useDataTable();
+
+  const [pageSize, setPageSize] = useState("10");
+
+  useEffect(() => {
+    set("pageSize", pageSize);
+  }, [pageSize, set]);
 
   return (
     <div className={"flex items-center space-x-2"}>
@@ -171,6 +186,23 @@ const DataTableNavigation = () => {
       <div>
         {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
       </div>
+      <Select
+        onValueChange={(value) => {
+          table.setPageSize(Number(value));
+          setPageSize(value);
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder={`Show ${pageSize}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {rowsCountOnPage.map((item) => (
+            <SelectItem key={item} value={item.toString()}>
+              Show {item}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };
