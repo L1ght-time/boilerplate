@@ -14,6 +14,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { createContext, useContext, useEffect, useState } from "react";
+import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
 import { Button } from "~/views/components/ui/button";
 import {
@@ -82,9 +83,21 @@ const DataTableHeader = () => {
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
-            <TableHead key={header.id}>
-              {!header.isPlaceholder &&
-                flexRender(header.column.columnDef.header, header.getContext())}
+            <TableHead
+              key={header.id}
+              onClick={() => {
+                header.column.toggleSorting(undefined, true); // <-- second arg true = multi
+              }}
+            >
+              <div className="flex items-center gap-2">
+                {!header.isPlaceholder &&
+                  flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                {header.column.getIsSorted() === "asc" && <FaSortAlphaUp />}
+                {header.column.getIsSorted() === "desc" && <FaSortAlphaDown />}
+              </div>
             </TableHead>
           ))}
         </TableRow>

@@ -4,11 +4,21 @@ import {
   ColumnDef,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
 } from "@tanstack/react-table";
+import { formatDistanceToNow, parseISO } from "date-fns";
+import { useState } from "react";
 import { usePagination } from "~/lib/hooks/use-pagination";
 import { User } from "~/types/entities/user";
 import { DataTable } from "~/views/components/data-table/data-table";
 import { Checkbox } from "~/views/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/views/components/ui/tooltip";
 
 const columns: ColumnDef<User>[] = [
   {
@@ -30,8 +40,8 @@ const columns: ColumnDef<User>[] = [
         aria-label="Select row"
       />
     ),
-    enableSorting: false,
     enableHiding: false,
+    enableSorting: false,
   },
   {
     accessorKey: "name",
@@ -56,6 +66,18 @@ const columns: ColumnDef<User>[] = [
   {
     accessorKey: "created_at",
     header: "Created at",
+    cell: ({ getValue }) => {
+      const date = parseISO(getValue<string>());
+
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>{formatDistanceToNow(date)}</TooltipTrigger>
+            <TooltipContent>{date.toDateString()}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    },
   },
 ];
 
@@ -67,13 +89,17 @@ export const UsersTableSection = (props: UsersTableSectionProps) => {
   const { users } = props;
 
   const { pagination, setPagination } = usePagination<User>(users);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const options = {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     autoResetPageIndex: false,
-    state: { pagination },
+    enableMultiSort: true,
+    state: { pagination, sorting },
   };
 
   return <DataTable data={users} columns={columns} {...options} />;
