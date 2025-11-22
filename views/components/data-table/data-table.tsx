@@ -83,12 +83,7 @@ const DataTableHeader = () => {
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
-            <TableHead
-              key={header.id}
-              onClick={() => {
-                header.column.toggleSorting(undefined, true); // <-- second arg true = multi
-              }}
-            >
+            <TableHead key={header.id}>
               <div className="flex items-center gap-2">
                 {!header.isPlaceholder &&
                   flexRender(
