@@ -102,5 +102,9 @@ export const UsersTableSection = (props: UsersTableSectionProps) => {
     state: { pagination, sorting },
   };
 
-  return <DataTable data={users} columns={columns} {...options} />;
+  return (
+    <div className="w-full p-5">
+      <DataTable data={users} columns={columns} {...options} />
+    </div>
+  );
 };

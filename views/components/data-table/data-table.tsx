@@ -62,7 +62,7 @@ export const DataTable = <TData, TValue>(
 
   return (
     <DataTableContext.Provider value={table}>
-      <div>
+      <div className="space-y-2">
         <div className="overflow-hidden rounded-md border">
           <Table>
             <DataTableHeader />
@@ -159,63 +159,67 @@ const DataTableNavigation = () => {
   }, [pageSize, set]);
 
   return (
-    <div className={"flex items-center space-x-2"}>
-      <Button
-        variant="outline"
-        size="icon"
-        className="size-8"
-        onClick={() => table.setPageIndex(0)}
-        disabled={!table.getCanPreviousPage()}
-      >
-        <ChevronsLeft />
-      </Button>
-      <Button
-        variant="outline"
-        size="icon"
-        className="size-8"
-        onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage()}
-      >
-        <ChevronLeft />
-      </Button>
-      <Button
-        variant="outline"
-        size="icon"
-        className="size-8"
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage()}
-      >
-        <ChevronRight />
-      </Button>
-      <Button
-        variant="outline"
-        size="icon"
-        className="size-8"
-        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-        disabled={!table.getCanNextPage()}
-      >
-        <ChevronsRight />
-      </Button>
-      <div>
-        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+    <div className="flex items-center justify-between">
+      <div className="flex items-center space-x-2">
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronsLeft />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronLeft />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronRight />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronsRight />
+        </Button>
       </div>
-      <Select
-        onValueChange={(value) => {
-          table.setPageSize(Number(value));
-          setPageSize(value);
-        }}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder={`Show ${pageSize}`} />
-        </SelectTrigger>
-        <SelectContent>
-          {rowsCountOnPage.map((item) => (
-            <SelectItem key={item} value={item.toString()}>
-              Show {item}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex items-center space-x-2">
+        <div>
+          {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        </div>
+        <Select
+          onValueChange={(value) => {
+            table.setPageSize(Number(value));
+            setPageSize(value);
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={`Show ${pageSize}`} />
+          </SelectTrigger>
+          <SelectContent>
+            {rowsCountOnPage.map((item) => (
+              <SelectItem key={item} value={item.toString()}>
+                Show {item}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };
