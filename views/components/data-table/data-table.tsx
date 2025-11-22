@@ -115,7 +115,11 @@ const DataTableBody = () => {
     <TableBody>
       {table.getRowModel().rows?.length ? (
         table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() && "selected"}
+            onClick={() => row.toggleSelected()}
+          >
             {row.getVisibleCells().map((cell) => (
               <TableCell key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -199,9 +203,6 @@ const DataTableNavigation = () => {
         </Button>
       </div>
       <div className="flex items-center space-x-2">
-        <div>
-          {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-        </div>
         <Select
           onValueChange={(value) => {
             table.setPageSize(Number(value));
@@ -219,6 +220,9 @@ const DataTableNavigation = () => {
             ))}
           </SelectContent>
         </Select>
+        <div>
+          {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        </div>
       </div>
     </div>
   );

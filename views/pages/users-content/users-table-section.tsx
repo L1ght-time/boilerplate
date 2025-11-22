@@ -40,8 +40,8 @@ const columns: ColumnDef<User>[] = [
         aria-label="Select row"
       />
     ),
-    enableHiding: false,
     enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: "name",
