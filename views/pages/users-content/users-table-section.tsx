@@ -88,23 +88,25 @@ type UsersTableSectionProps = {
 export const UsersTableSection = (props: UsersTableSectionProps) => {
   const { users } = props;
 
-  const { pagination, setPagination } = usePagination<User>(users);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const { pagination, setPagination } = usePagination<User>(users);
 
   const options = {
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    autoResetPageIndex: false,
-    enableMultiSort: true,
+    data: users,
+    columns,
     state: { pagination, sorting },
+    onSortingChange: setSorting,
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
+    isMultiSortEvent: () => true,
   };
 
   return (
     <div className="w-full p-5">
-      <DataTable data={users} columns={columns} {...options} />
+      <DataTable {...options} />
     </div>
   );
 };

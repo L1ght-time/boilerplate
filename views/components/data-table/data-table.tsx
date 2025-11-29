@@ -6,7 +6,7 @@ import {
   TableOptions,
   useReactTable,
 } from "@tanstack/react-table";
-import { Table as TableType } from "@tanstack/table-core";
+import { Column, Table as TableType } from "@tanstack/table-core";
 import {
   ChevronLeft,
   ChevronRight,
@@ -75,15 +75,38 @@ export const DataTable = <TData, TValue>(
   );
 };
 
-const DataTableHeader = () => {
-  const table = useDataTable();
+const DataTableHeader = <TData, TValue>() => {
+  const table = useDataTable<TData>();
+
+  const handleMultiSortByClick = (column: Column<TData, TValue>) => {
+    table.setSorting((prev) => {
+      const activeSortColumn = prev.find((col) => col.id === column.id);
+
+      if (!activeSortColumn) {
+        return [...prev, { id: column.id, desc: false }];
+      }
+
+      if (activeSortColumn && !activeSortColumn.desc) {
+        return prev.map((col) =>
+          col.id === column.id ? { id: column.id, desc: true } : col
+        );
+      }
+
+      return prev.filter((col) => col.id !== column.id);
+    });
+  };
 
   return (
     <TableHeader>
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
-            <TableHead key={header.id}>
+            <TableHead
+              key={header.id}
+              onClick={() =>
+                handleMultiSortByClick(header.column as Column<TData, TValue>)
+              }
+            >
               <div className="flex items-center gap-2">
                 {!header.isPlaceholder &&
                   flexRender(
