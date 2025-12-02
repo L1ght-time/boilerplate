@@ -16,6 +16,7 @@ import {
 import { createContext, useContext, useEffect, useState } from "react";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
+import { Badge } from "~/views/components/ui/badge";
 import { Button } from "~/views/components/ui/button";
 import {
   Select,
@@ -79,20 +80,22 @@ const DataTableHeader = <TData, TValue>() => {
   const table = useDataTable<TData>();
 
   const handleMultiSortByClick = (column: Column<TData, TValue>) => {
+    if (!column.getCanSort()) return;
+
     table.setSorting((prev) => {
-      const activeSortColumn = prev.find((col) => col.id === column.id);
+      const activeSortColumn = prev.find((col) => col.id === column?.id);
 
       if (!activeSortColumn) {
-        return [...prev, { id: column.id, desc: false }];
+        return [...prev, { id: column?.id, desc: false }];
       }
 
       if (activeSortColumn && !activeSortColumn.desc) {
         return prev.map((col) =>
-          col.id === column.id ? { id: column.id, desc: true } : col
+          col.id === column?.id ? { id: column?.id, desc: true } : col
         );
       }
 
-      return prev.filter((col) => col.id !== column.id);
+      return prev.filter((col) => col.id !== column?.id);
     });
   };
 
@@ -115,6 +118,14 @@ const DataTableHeader = <TData, TValue>() => {
                   )}
                 {header.column.getIsSorted() === "asc" && <FaSortAlphaUp />}
                 {header.column.getIsSorted() === "desc" && <FaSortAlphaDown />}
+
+                {header.column.getIsSorted() && (
+                  <Badge size="sm" variant="outline">
+                    {table
+                      .getState()
+                      .sorting.findIndex((s) => s.id === header.column.id) + 1}
+                  </Badge>
+                )}
               </div>
             </TableHead>
           ))}

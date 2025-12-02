@@ -5,11 +5,10 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
 } from "@tanstack/react-table";
 import { formatDistanceToNow, parseISO } from "date-fns";
-import { useState } from "react";
 import { usePagination } from "~/lib/hooks/use-pagination";
+import { useSort } from "~/lib/hooks/useSort";
 import { User } from "~/types/entities/user";
 import { DataTable } from "~/views/components/data-table/data-table";
 import { Checkbox } from "~/views/components/ui/checkbox";
@@ -88,7 +87,7 @@ type UsersTableSectionProps = {
 export const UsersTableSection = (props: UsersTableSectionProps) => {
   const { users } = props;
 
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const { sorting, setSorting } = useSort();
   const { pagination, setPagination } = usePagination<User>(users);
 
   const options = {
