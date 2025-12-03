@@ -1,5 +1,4 @@
 "use client";
-
 import {
   ColumnDef,
   flexRender,
@@ -13,7 +12,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
 import { Badge } from "~/views/components/ui/badge";
@@ -34,7 +33,11 @@ import {
   TableHeader,
   TableRow,
 } from "~/views/components/ui/table";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/views/components/ui/tooltip";
 type DataTableProps<TData, TValue> = {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
@@ -109,6 +112,12 @@ const DataTableHeader = <TData, TValue>() => {
               onClick={() =>
                 handleMultiSortByClick(header.column as Column<TData, TValue>)
               }
+              style={{
+                width: header.column.getSize(),
+                minWidth: header.column.columnDef.minSize,
+                maxWidth: header.column.columnDef.maxSize,
+              }}
+              className="group"
             >
               <div className="flex items-center gap-2">
                 {!header.isPlaceholder &&
@@ -118,7 +127,9 @@ const DataTableHeader = <TData, TValue>() => {
                   )}
                 {header.column.getIsSorted() === "asc" && <FaSortAlphaUp />}
                 {header.column.getIsSorted() === "desc" && <FaSortAlphaDown />}
-
+                {!header.column.getIsSorted() && header.column.getCanSort() && (
+                  <FaSortAlphaUp className="opacity-0 group-hover:opacity-40 transition-opacity" />
+                )}
                 {header.column.getIsSorted() && (
                   <Badge size="sm" variant="outline">
                     {table
@@ -133,6 +144,67 @@ const DataTableHeader = <TData, TValue>() => {
       ))}
     </TableHeader>
   );
+};
+
+type TruncatedCellContentProps = {
+  content: React.ReactNode;
+};
+
+const TruncatedCellContent = ({ content }: TruncatedCellContentProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const [textContent, setTextContent] = useState("");
+
+  useEffect(() => {
+    const checkTruncation = () => {
+      if (contentRef.current) {
+        const element = contentRef.current;
+
+        console.log(element.scrollWidth, element.clientWidth);
+        console.log(element.scrollHeight, element.clientHeight);
+        const isTextTruncated =
+          element.scrollWidth > element.clientWidth ||
+          element.scrollHeight > element.clientHeight;
+
+        setIsTruncated(isTextTruncated);
+
+        // Extract text content from the element
+        const text = element.textContent || element.innerText || "";
+        setTextContent(text);
+      }
+    };
+
+    // Use requestAnimationFrame to ensure DOM is fully laid out
+    const rafId = requestAnimationFrame(() => {
+      checkTruncation();
+    });
+
+    // Recheck on window resize
+    window.addEventListener("resize", checkTruncation);
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", checkTruncation);
+    };
+  }, [content]);
+
+  const cellContent = (
+    <div ref={contentRef} className="w-full truncate">
+      {content}
+    </div>
+  );
+
+  if (isTruncated && textContent) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{cellContent}</TooltipTrigger>
+        <TooltipContent>
+          <p className="max-w-xs break-words">{textContent}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return cellContent;
 };
 
 const DataTableBody = () => {
@@ -150,8 +222,21 @@ const DataTableBody = () => {
             onClick={() => row.toggleSelected()}
           >
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              <TableCell
+                key={cell.id}
+                style={{
+                  width: cell.column.getSize(),
+                  minWidth: cell.column.columnDef.minSize,
+                  maxWidth: cell.column.columnDef.maxSize,
+                }}
+                className="hover:overflow-visible hover:whitespace-normal"
+              >
+                <TruncatedCellContent
+                  content={flexRender(
+                    cell.column.columnDef.cell,
+                    cell.getContext()
+                  )}
+                />
               </TableCell>
             ))}
           </TableRow>

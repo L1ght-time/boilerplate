@@ -41,30 +41,51 @@ const columns: ColumnDef<User>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+    size: 40,
+    minSize: 40,
+    maxSize: 40,
   },
   {
     accessorKey: "name",
     header: "Name",
+    size: 200,
+    minSize: 200,
+    maxSize: 200,
   },
   {
     accessorKey: "email",
     header: "Email",
+    size: 200,
+    minSize: 200,
+    maxSize: 200,
   },
   {
     accessorKey: "country",
     header: "Country",
+    size: 200,
+    minSize: 200,
+    maxSize: 200,
   },
   {
     accessorKey: "city",
     header: "City",
+    size: 200,
+    minSize: 200,
+    maxSize: 200,
   },
   {
     accessorKey: "status",
     header: "Status",
+    size: 200,
+    minSize: 200,
+    maxSize: 200,
   },
   {
     accessorKey: "created_at",
     header: "Created at",
+    size: 200,
+    minSize: 200,
+    maxSize: 200,
     cell: ({ getValue }) => {
       const date = parseISO(getValue<string>());
 
