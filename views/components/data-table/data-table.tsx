@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
+import { HiDotsVertical } from "react-icons/hi";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/views/components/ui/badge";
@@ -110,9 +111,6 @@ const DataTableHeader = <TData, TValue>() => {
           {headerGroup.headers.map((header) => (
             <TableHead
               key={header.id}
-              onClick={() =>
-                handleMultiSortByClick(header.column as Column<TData, TValue>)
-              }
               style={{
                 width: header.column.getSize(),
                 minWidth: header.column.columnDef.minSize,
@@ -126,18 +124,38 @@ const DataTableHeader = <TData, TValue>() => {
                     header.column.columnDef.header,
                     header.getContext()
                   )}
-                {header.column.getIsSorted() === "asc" && <FaSortAlphaUp />}
-                {header.column.getIsSorted() === "desc" && <FaSortAlphaDown />}
-                {!header.column.getIsSorted() && header.column.getCanSort() && (
-                  <FaSortAlphaUp className="opacity-0 group-hover:opacity-40 transition-opacity" />
-                )}
-                {header.column.getIsSorted() && (
-                  <Badge size="sm" variant="outline">
-                    {table
-                      .getState()
-                      .sorting.findIndex((s) => s.id === header.column.id) + 1}
-                  </Badge>
-                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    handleMultiSortByClick(
+                      header.column as Column<TData, TValue>
+                    )
+                  }
+                  className="relative"
+                >
+                  {header.column.getIsSorted() === "asc" && <FaSortAlphaUp />}
+                  {header.column.getIsSorted() === "desc" && (
+                    <FaSortAlphaDown />
+                  )}
+                  {!header.column.getIsSorted() &&
+                    header.column.getCanSort() && (
+                      <FaSortAlphaUp className="opacity-0 group-hover:opacity-40 transition-opacity" />
+                    )}
+                  {header.column.getIsSorted() &&
+                    table.getState().sorting.length > 1 && (
+                      <Badge size="xs" className="absolute top-0 right-0">
+                        {table
+                          .getState()
+                          .sorting.findIndex((s) => s.id === header.column.id) +
+                          1}
+                      </Badge>
+                    )}
+                </Button>
+
+                <Button variant="ghost" size="icon" onClick={() => {}}>
+                  <HiDotsVertical className="opacity-0 group-hover:opacity-40 transition-opacity" />
+                </Button>
               </div>
             </TableHead>
           ))}
