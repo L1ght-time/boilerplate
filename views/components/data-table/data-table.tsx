@@ -15,6 +15,7 @@ import {
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
+import { cn } from "~/lib/utils";
 import { Badge } from "~/views/components/ui/badge";
 import { Button } from "~/views/components/ui/button";
 import {
@@ -146,11 +147,11 @@ const DataTableHeader = <TData, TValue>() => {
   );
 };
 
-type TruncatedCellContentProps = {
-  content: React.ReactNode;
-};
+type TruncatedCellContentProps = React.JSX.IntrinsicElements["div"];
 
-const TruncatedCellContent = ({ content }: TruncatedCellContentProps) => {
+const TruncatedCellContent = (props: TruncatedCellContentProps) => {
+  const { children, className, ...rest } = props;
+
   const contentRef = useRef<HTMLDivElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
   const [textContent, setTextContent] = useState("");
@@ -160,36 +161,35 @@ const TruncatedCellContent = ({ content }: TruncatedCellContentProps) => {
       if (contentRef.current) {
         const element = contentRef.current;
 
-        console.log(element.scrollWidth, element.clientWidth);
-        console.log(element.scrollHeight, element.clientHeight);
         const isTextTruncated =
           element.scrollWidth > element.clientWidth ||
           element.scrollHeight > element.clientHeight;
 
         setIsTruncated(isTextTruncated);
 
-        // Extract text content from the element
         const text = element.textContent || element.innerText || "";
         setTextContent(text);
       }
     };
 
-    // Use requestAnimationFrame to ensure DOM is fully laid out
     const rafId = requestAnimationFrame(() => {
       checkTruncation();
     });
 
-    // Recheck on window resize
     window.addEventListener("resize", checkTruncation);
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", checkTruncation);
     };
-  }, [content]);
+  }, []);
 
   const cellContent = (
-    <div ref={contentRef} className="w-full truncate">
-      {content}
+    <div
+      ref={contentRef}
+      className={cn("w-full truncate", className)}
+      {...rest}
+    >
+      {children}
     </div>
   );
 
@@ -231,12 +231,9 @@ const DataTableBody = () => {
                 }}
                 className="hover:overflow-visible hover:whitespace-normal"
               >
-                <TruncatedCellContent
-                  content={flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext()
-                  )}
-                />
+                <TruncatedCellContent>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TruncatedCellContent>
               </TableCell>
             ))}
           </TableRow>
