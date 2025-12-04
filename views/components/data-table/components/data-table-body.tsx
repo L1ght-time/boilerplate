@@ -1,4 +1,5 @@
 "use client";
+
 import { flexRender } from "@tanstack/react-table";
 import { TableBody, TableCell, TableRow } from "~/views/components/ui/table";
 import { useDataTable } from "../hooks/use-data-table";

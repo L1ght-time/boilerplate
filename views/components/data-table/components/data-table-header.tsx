@@ -1,8 +1,9 @@
 "use client";
+
 import { flexRender } from "@tanstack/react-table";
 import { Column } from "@tanstack/table-core";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
-import { HiDotsVertical } from "react-icons/hi";
+import { DataTableActionsMenu } from "~/views/components/data-table/components/data-table-actions-menu";
 import { Badge } from "~/views/components/ui/badge";
 import { Button } from "~/views/components/ui/button";
 import { TableHead, TableHeader, TableRow } from "~/views/components/ui/table";
@@ -51,38 +52,39 @@ export const DataTableHeader = <TData, TValue>() => {
                     header.column.columnDef.header,
                     header.getContext()
                   )}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() =>
-                    handleMultiSortByClick(
-                      header.column as Column<TData, TValue>
-                    )
-                  }
-                  className="relative"
-                >
-                  {header.column.getIsSorted() === "asc" && <FaSortAlphaUp />}
-                  {header.column.getIsSorted() === "desc" && (
-                    <FaSortAlphaDown />
-                  )}
-                  {!header.column.getIsSorted() &&
-                    header.column.getCanSort() && (
-                      <FaSortAlphaUp className="opacity-0 group-hover:opacity-40 transition-opacity" />
+                {header.column.getCanSort() && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      handleMultiSortByClick(
+                        header.column as Column<TData, TValue>
+                      )
+                    }
+                    className="relative"
+                  >
+                    {header.column.getIsSorted() === "asc" && <FaSortAlphaUp />}
+                    {header.column.getIsSorted() === "desc" && (
+                      <FaSortAlphaDown />
                     )}
-                  {header.column.getIsSorted() &&
-                    table.getState().sorting.length > 1 && (
-                      <Badge size="xs" className="absolute top-0 right-0">
-                        {table
-                          .getState()
-                          .sorting.findIndex((s) => s.id === header.column.id) +
-                          1}
-                      </Badge>
-                    )}
-                </Button>
+                    {!header.column.getIsSorted() &&
+                      header.column.getCanSort() && (
+                        <FaSortAlphaUp className="opacity-0 group-hover:opacity-40 transition-opacity" />
+                      )}
+                    {header.column.getIsSorted() &&
+                      table.getState().sorting.length > 1 && (
+                        <Badge size="xs" className="absolute top-0 right-0">
+                          {table
+                            .getState()
+                            .sorting.findIndex(
+                              (s) => s.id === header.column.id
+                            ) + 1}
+                        </Badge>
+                      )}
+                  </Button>
+                )}
 
-                <Button variant="ghost" size="icon" onClick={() => {}}>
-                  <HiDotsVertical className="opacity-0 group-hover:opacity-40 transition-opacity" />
-                </Button>
+                <DataTableActionsMenu column={header.column} />
               </div>
             </TableHead>
           ))}

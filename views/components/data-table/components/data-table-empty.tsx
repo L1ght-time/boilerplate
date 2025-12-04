@@ -1,4 +1,5 @@
 "use client";
+
 import { TableCell, TableRow } from "~/views/components/ui/table";
 
 type DataTableEmptyProps = React.JSX.IntrinsicElements["tr"] & {
