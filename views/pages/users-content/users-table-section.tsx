@@ -10,7 +10,7 @@ import { formatDistanceToNow, parseISO } from "date-fns";
 import { usePagination } from "~/lib/hooks/use-pagination";
 import { useSort } from "~/lib/hooks/useSort";
 import { User } from "~/types/entities/user";
-import { DataTable } from "~/views/components/data-table/data-table";
+import { DataTable } from "~/views/components/data-table";
 import { Checkbox } from "~/views/components/ui/checkbox";
 import {
   Tooltip,
