@@ -6,6 +6,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
 import { Button } from "~/views/components/ui/button";
@@ -23,8 +24,11 @@ export const rowsCountOnPage = [10, 20, 30, 40, 50];
 export const DataTableNavigation = () => {
   const { set } = useSearchParamsActions();
   const table = useDataTable();
+  const searchParams = useSearchParams();
 
-  const [pageSize, setPageSize] = useState("10");
+  const [pageSize, setPageSize] = useState(
+    searchParams.get("pageSize") || "10"
+  );
 
   useEffect(() => {
     set("pageSize", pageSize);
