@@ -11,6 +11,7 @@ import { usePagination } from "~/lib/hooks/use-pagination";
 import { useSort } from "~/lib/hooks/useSort";
 import { User } from "~/types/entities/user";
 import { DataTable } from "~/views/components/data-table";
+import { DataTableStatus } from "~/views/components/data-table/components";
 import { Checkbox } from "~/views/components/ui/checkbox";
 import {
   Tooltip,
@@ -79,6 +80,10 @@ const columns: ColumnDef<User>[] = [
     size: 200,
     minSize: 200,
     maxSize: 200,
+    cell: ({ getValue }) => {
+      const status = getValue<User["status"]>();
+      return <DataTableStatus status={status} />;
+    },
   },
   {
     accessorKey: "created_at",
