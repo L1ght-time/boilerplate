@@ -1,7 +1,7 @@
 "use client";
 
 import { Column } from "@tanstack/react-table";
-import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
+import { FaFilter, FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 import { GrUnsorted } from "react-icons/gr";
 import { HiDotsVertical } from "react-icons/hi";
 import { useToggle } from "react-use";
@@ -16,6 +16,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "~/views/components/ui/dropdown-menu";
+import { SelectSeparator } from "~/views/components/ui/select";
 
 type DataTableActionsMenuProps<TData, TValue> = {
   column: Column<TData, TValue>;
@@ -72,6 +73,14 @@ export const DataTableActionsMenu = <TData, TValue>(
               Unsort
             </DropdownMenuItem>
           )}
+
+          <SelectSeparator />
+
+          <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => {}}>
+            <FaFilter />
+            Filter
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
