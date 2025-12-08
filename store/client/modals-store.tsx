@@ -11,7 +11,7 @@ type Modal = ModalProps & {
   id: string;
 };
 
-type ModalCreateProps = Omit<ModalProps, "props"> & {
+export type ModalCreateProps = Omit<ModalProps, "props"> & {
   props: DistributiveOmit<ModalProps["props"], "id">;
 };
 

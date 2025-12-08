@@ -15,10 +15,8 @@ type DataTableFiltersModalProps = DialogProps & {
 };
 
 export const DataTableFiltersModal = (props: DataTableFiltersModalProps) => {
-  const { id } = props;
-
   const hideModalById = useModalsStore((state) => state.hideModalById);
-  const onClose = () => hideModalById(id);
+  const onClose = () => hideModalById(props.id);
 
   return (
     <Dialog open>

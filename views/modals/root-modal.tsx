@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { ModalProps, modalsComponents } from "~/lib/constants/modals";
-import { useModalsStore } from "~/store/client/modals-store";
+import { ModalCreateProps, useModalsStore } from "~/store/client/modals-store";
 
 export const RootModal = () => {
   const modalsMap = useModalsStore((state) => state.modals);
@@ -22,7 +21,7 @@ export const RootModal = () => {
           <ModalComponent
             key={modal.id}
             id={modal.id}
-            {...(modalProps as any)}
+            {...(modalProps as unknown as ModalCreateProps["props"])}
           />
         );
       })}
