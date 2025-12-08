@@ -5,7 +5,9 @@ import { FaFilter, FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 import { GrUnsorted } from "react-icons/gr";
 import { HiDotsVertical } from "react-icons/hi";
 import { useToggle } from "react-use";
+import { modalTypes } from "~/lib/constants/modals";
 import { cn } from "~/lib/utils";
+import { useModalsStore } from "~/store/client/modals-store";
 import { useDataTable } from "~/views/components/data-table/hooks";
 import { Button } from "~/views/components/ui/button";
 import {
@@ -32,6 +34,12 @@ export const DataTableActionsMenu = <TData, TValue>(
 
   const canSort = table.getColumn(column.id)?.getCanSort();
   const isSorted = table.getColumn(column.id)?.getIsSorted();
+
+  const showModal = useModalsStore((state) => state.showModal);
+
+  const onFilters = async () => {
+    showModal({ type: modalTypes.dataTableFilters, props: {} });
+  };
 
   if (!canSort) return;
 
@@ -77,7 +85,7 @@ export const DataTableActionsMenu = <TData, TValue>(
           <SelectSeparator />
 
           <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => {}}>
+          <DropdownMenuItem onClick={onFilters}>
             <FaFilter />
             Filter
           </DropdownMenuItem>

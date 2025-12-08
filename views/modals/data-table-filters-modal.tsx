@@ -1,3 +1,5 @@
+import { DialogProps } from "@radix-ui/react-dialog";
+import { useModalsStore } from "~/store/client/modals-store";
 import { Button } from "~/views/components/ui/button";
 import {
   Dialog,
@@ -6,30 +8,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "~/views/components/ui/dialog";
 
-type DataTableFiltersModalProps = React.JSX.IntrinsicElements["div"] & {};
+type DataTableFiltersModalProps = DialogProps & {
+  id: string;
+};
 
 export const DataTableFiltersModal = (props: DataTableFiltersModalProps) => {
+  const { id } = props;
+
+  const hideModalById = useModalsStore((state) => state.hideModalById);
+  const onClose = () => hideModalById(id);
+
   return (
-    <Dialog>
-      <form>
-        <DialogTrigger>Open</DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
+    <Dialog open>
+      <DialogContent onClose={onClose}>
+        <DialogHeader>
+          <DialogTitle>Filters</DialogTitle>
+          <DialogDescription>ffwefwef</DialogDescription>
+        </DialogHeader>
         <DialogFooter>
           <Button>Save</Button>
-          <Button>Cancel</Button>
+          <Button onClick={onClose}>Cancel</Button>
         </DialogFooter>
-      </form>
+      </DialogContent>
     </Dialog>
   );
 };
