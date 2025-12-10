@@ -1,23 +1,25 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DialogProps, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogProps } from "@radix-ui/react-dialog";
 import { useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { useToggle } from "react-use";
 import z from "zod";
 import { useModalsStore } from "~/store/client/modals-store";
 import { InputField } from "~/views/components/fields/text-field";
 import { Button } from "~/views/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-} from "~/views/components/ui/dialog";
 import { Form } from "~/views/components/ui/form";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "~/views/components/ui/sheet";
 
-type DataTableFiltersModalProps = DialogProps & {
+type DataTableFiltersSheetProps = DialogProps & {
   id: string;
 };
 
@@ -32,8 +34,10 @@ const filtersSchema = z.object({
 
 type FiltersSchemaType = z.infer<typeof filtersSchema>;
 
-export const DataTableFiltersModal = (props: DataTableFiltersModalProps) => {
+export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
   const { id } = props;
+
+  const [open, setOpen] = useToggle(true);
 
   const hideModalById = useModalsStore((state) => state.hideModalById);
   const onClose = () => hideModalById(id);
@@ -56,12 +60,12 @@ export const DataTableFiltersModal = (props: DataTableFiltersModalProps) => {
   };
 
   return (
-    <Dialog open>
-      <DialogContent onClose={onClose}>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Filters:</DialogTitle>
+            <SheetHeader>
+              <SheetTitle>Filters:</SheetTitle>
               <InputField
                 control={form.control}
                 name="filters.0.name"
@@ -74,18 +78,18 @@ export const DataTableFiltersModal = (props: DataTableFiltersModalProps) => {
                 label="Value"
                 placeholder="Enter Name"
               />
-            </DialogHeader>
-            <DialogFooter>
+            </SheetHeader>
+            <SheetFooter>
               <Button>
                 <FaPlus /> ADD FILTER
               </Button>
               <Button onClick={onClose}>
                 <MdDelete /> REMOVE ALL
               </Button>
-            </DialogFooter>
+            </SheetFooter>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };

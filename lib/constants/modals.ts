@@ -1,4 +1,4 @@
-import { DataTableFiltersModal } from "~/views/modals/data-table-filters-modal";
+import { DataTableFiltersSheet } from "~/views/modals/sheets/data-table-filters-sheet";
 
 export const modalTypes = {
   dataTableFilters: "dataTableFilters",
@@ -7,7 +7,7 @@ export const modalTypes = {
 export type ModalType = keyof typeof modalTypes;
 
 export const modalsComponents = {
-  [modalTypes.dataTableFilters]: DataTableFiltersModal,
+  [modalTypes.dataTableFilters]: DataTableFiltersSheet,
 } as const;
 
 export type ModalProps<T extends ModalType = ModalType> = {
