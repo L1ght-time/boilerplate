@@ -1,13 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DialogProps } from "@radix-ui/react-dialog";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useToggle } from "react-use";
 import z from "zod";
-import { useModalsStore } from "~/store/client/modals-store";
+import { useTableDataStore } from "~/store/client/table-data";
+import { Autocomplete } from "~/views/components/fields/autocomplete";
 import { InputField } from "~/views/components/fields/text-field";
 import { Button } from "~/views/components/ui/button";
 import { Form } from "~/views/components/ui/form";
@@ -19,14 +19,10 @@ import {
   SheetTitle,
 } from "~/views/components/ui/sheet";
 
-type DataTableFiltersSheetProps = DialogProps & {
-  id: string;
-};
-
 const filtersSchema = z.object({
   filters: z.array(
     z.object({
-      name: z.string(),
+      column: z.string(),
       value: z.string(),
     })
   ),
@@ -34,13 +30,12 @@ const filtersSchema = z.object({
 
 type FiltersSchemaType = z.infer<typeof filtersSchema>;
 
-export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
-  const { id } = props;
-
+export const DataTableFiltersSheet = () => {
   const [open, setOpen] = useToggle(true);
 
-  const hideModalById = useModalsStore((state) => state.hideModalById);
-  const onClose = () => hideModalById(id);
+  const columns = useTableDataStore((state) => state.columns);
+
+  console.log({ columns });
 
   const form = useForm<FiltersSchemaType>({
     resolver: zodResolver(filtersSchema),
@@ -48,16 +43,27 @@ export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
     defaultValues: {
       filters: [
         {
-          name: "",
+          column: "",
           value: "",
         },
       ],
     },
   });
 
+  const { fields, append, replace } = useFieldArray({
+    control: form.control,
+    name: "filters",
+  });
+
   const onSubmit = (data: FiltersSchemaType) => {
     console.log(data);
   };
+
+  // const filteredColumns = columns.filter(
+  //   (column) => form
+  // );
+
+  console.log({ ...fields });
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -66,24 +72,43 @@ export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
               <SheetTitle>Filters:</SheetTitle>
-              <InputField
-                control={form.control}
-                name="filters.0.name"
-                label="Name"
-                placeholder="Enter Name"
-              />
-              <InputField
-                control={form.control}
-                name="filters.0.value"
-                label="Value"
-                placeholder="Enter Name"
-              />
+              {fields.map((field, index) => (
+                <div key={field.id}>
+                  <Autocomplete
+                    control={form.control}
+                    options={columns}
+                    name={`filters.${index}.column`}
+                    label="Column"
+                    placeholder="Select Column"
+                  />
+                  <InputField
+                    control={form.control}
+                    name={`filters.${index}.value`}
+                    label="Value"
+                    placeholder="Enter Value"
+                  />
+                </div>
+              ))}
             </SheetHeader>
             <SheetFooter>
-              <Button>
+              <Button
+                onClick={() => {
+                  append({
+                    column: "",
+                    value: "",
+                  });
+                }}
+              >
                 <FaPlus /> ADD FILTER
               </Button>
-              <Button onClick={onClose}>
+              <Button
+                onClick={() => {
+                  replace({
+                    column: "",
+                    value: "",
+                  });
+                }}
+              >
                 <MdDelete /> REMOVE ALL
               </Button>
             </SheetFooter>

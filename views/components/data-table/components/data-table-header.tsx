@@ -2,7 +2,9 @@
 
 import { flexRender } from "@tanstack/react-table";
 import { Column } from "@tanstack/table-core";
+import { useEffect } from "react";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
+import { useTableDataStore } from "~/store/client/table-data";
 import { DataTableActionsMenu } from "~/views/components/data-table/components/data-table-actions-menu";
 import { Badge } from "~/views/components/ui/badge";
 import { Button } from "~/views/components/ui/button";
@@ -11,6 +13,13 @@ import { useDataTable } from "../hooks/use-data-table";
 
 export const DataTableHeader = <TData, TValue>() => {
   const table = useDataTable<TData>();
+
+  const setAllColumns = useTableDataStore((state) => state.setAllColumns);
+
+  useEffect(() => {
+    const columns = table.getAllColumns().map((column) => column.id);
+    setAllColumns(columns);
+  }, [setAllColumns, table]);
 
   const handleMultiSortByClick = (column: Column<TData, TValue>) => {
     if (!column.getCanSort()) return;

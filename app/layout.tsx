@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ModalsStoreProvider } from "~/store/client/modals-store";
+import { TableDataProvider } from "~/store/client/table-data";
 import { RootModal } from "~/views/modals/root-modal";
 import "./globals.css";
 
@@ -30,8 +31,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ModalsStoreProvider>
-          <RootModal />
-          {children}
+          <TableDataProvider>
+            <RootModal />
+            {children}
+          </TableDataProvider>
         </ModalsStoreProvider>
       </body>
     </html>
