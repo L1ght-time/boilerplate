@@ -4,7 +4,7 @@ import { flexRender } from "@tanstack/react-table";
 import { Column } from "@tanstack/table-core";
 import { useEffect } from "react";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
-import { useTableDataStore } from "~/store/client/table-data";
+import { useTableDataStore } from "~/store/client/table-data-store";
 import { DataTableActionsMenu } from "~/views/components/data-table/components/data-table-actions-menu";
 import { Badge } from "~/views/components/ui/badge";
 import { Button } from "~/views/components/ui/button";

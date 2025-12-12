@@ -38,7 +38,7 @@ export const DataTableActionsMenu = <TData, TValue>(
   const showModal = useModalsStore((state) => state.showModal);
 
   const onFilters = async () => {
-    showModal({ type: modalTypes.dataTableFilters, props: {} });
+    showModal({ type: modalTypes.dataTableFiltersSheet, props: {} });
   };
 
   if (!canSort) return;

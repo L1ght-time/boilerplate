@@ -6,7 +6,7 @@ import { FaPlus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useToggle } from "react-use";
 import z from "zod";
-import { useTableDataStore } from "~/store/client/table-data";
+import { useTableDataStore } from "~/store/client/table-data-store";
 import { Autocomplete } from "~/views/components/fields/autocomplete";
 import { InputField } from "~/views/components/fields/text-field";
 import { Button } from "~/views/components/ui/button";
@@ -33,9 +33,7 @@ type FiltersSchemaType = z.infer<typeof filtersSchema>;
 export const DataTableFiltersSheet = () => {
   const [open, setOpen] = useToggle(true);
 
-  const columns = useTableDataStore((state) => state.columns);
-
-  console.log({ columns });
+    const columns = useTableDataStore((state) => state.columns);
 
   const form = useForm<FiltersSchemaType>({
     resolver: zodResolver(filtersSchema),
@@ -62,8 +60,6 @@ export const DataTableFiltersSheet = () => {
   // const filteredColumns = columns.filter(
   //   (column) => form
   // );
-
-  console.log({ ...fields });
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

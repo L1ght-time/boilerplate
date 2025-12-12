@@ -37,7 +37,8 @@ const createModalsStore = (initState: ModalsState = initialState) =>
     ...initState,
     showModal: ({ type, props }) => {
       const id = nanoid();
-      const newModal = { id, type, props } as Modal;
+
+      const newModal = { ...props, type, id } as Modal;
       set((state) => ({
         modals: { ...state.modals, [id]: newModal },
       }));
