@@ -57,61 +57,59 @@ export const Autocomplete = <
     <FormField
       control={control}
       name={name}
-      render={({ field }) => {
-        return (
-          <FormItem>
-            {label && <FormLabel>{label}</FormLabel>}
-            <FormControl>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="justify-between"
-                  >
-                    {field.value
-                      ? options.find((option) => option === field.value)
-                      : placeholder}
-                    <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput placeholder="Search framework..." />
-                    <CommandList>
-                      <CommandEmpty>No framework found.</CommandEmpty>
-                      <CommandGroup>
-                        {options.map((option) => (
-                          <CommandItem
-                            key={option}
-                            value={option}
-                            onSelect={(currentValue) => {
-                              form.setValue(name, currentValue as any);
-                              setOpen(false);
-                            }}
-                          >
-                            {option}
-                            <CheckIcon
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                field.value === option
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field }) => (
+        <FormItem className="w-full">
+          {label && <FormLabel>{label}</FormLabel>}
+          <FormControl>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="justify-between"
+                >
+                  {field.value
+                    ? options.find((option) => option === field.value)
+                    : placeholder}
+                  <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search framework..." />
+                  <CommandList>
+                    <CommandEmpty>No options found.</CommandEmpty>
+                    <CommandGroup>
+                      {options.map((option) => (
+                        <CommandItem
+                          key={option}
+                          value={option}
+                          onSelect={(currentValue) => {
+                            form.setValue(name, currentValue as any);
+                            setOpen(false);
+                          }}
+                        >
+                          {option}
+                          <CheckIcon
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              field.value === option
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 };

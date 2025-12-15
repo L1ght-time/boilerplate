@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogProps } from "@radix-ui/react-dialog";
+import { useCallback } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -58,10 +59,20 @@ export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
     },
   });
 
-  const { fields, append, replace } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "filters",
   });
+
+  const onClose = useCallback(() => {
+    toggleOpen(false);
+    form.reset();
+  }, [toggleOpen, form]);
+
+  const handleRemoveByIndex = useCallback(
+    (index: number) => (fields.length === 1 ? onClose() : remove(index)),
+    [fields.length, onClose, remove]
+  );
 
   const onSubmit = (data: FiltersSchemaType) => {
     console.log(data);
@@ -74,25 +85,35 @@ export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <SheetHeader>
               <SheetTitle>Filters:</SheetTitle>
-              {fields.map((field, index) => (
-                <div key={field.id}>
-                  <Autocomplete
-                    control={form.control}
-                    options={columns}
-                    name={`filters.${index}.column`}
-                    label="Column"
-                    placeholder="Select Column"
-                  />
-                  <InputField
-                    control={form.control}
-                    name={`filters.${index}.value`}
-                    label="Value"
-                    placeholder="Enter Value"
-                  />
-                </div>
-              ))}
+              <div className="flex flex-col gap-2">
+                {fields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2 items-center">
+                    <Autocomplete
+                      control={form.control}
+                      options={columns}
+                      name={`filters.${index}.column`}
+                      label="Column"
+                      placeholder="Select Column"
+                    />
+                    <InputField
+                      control={form.control}
+                      name={`filters.${index}.value`}
+                      label="Value"
+                      placeholder="Enter Value"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveByIndex(index)}
+                      className="self-end"
+                    >
+                      <MdDelete />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </SheetHeader>
-            <SheetFooter>
+            <SheetFooter className="flex flex-row gap-2">
               <Button
                 onClick={() => {
                   append({
@@ -103,14 +124,7 @@ export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
               >
                 <FaPlus /> ADD FILTER
               </Button>
-              <Button
-                onClick={() => {
-                  replace({
-                    column: "",
-                    value: "",
-                  });
-                }}
-              >
+              <Button onClick={onClose}>
                 <MdDelete /> REMOVE ALL
               </Button>
             </SheetFooter>
