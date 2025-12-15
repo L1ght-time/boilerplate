@@ -20,9 +20,9 @@ export const RootModal = () => {
 
         return (
           <ModalComponent
+            {...(modalProps as ModalProps["props"])}
             key={modal.id}
             id={modal.id}
-            {...((modalProps ?? {}) as ModalProps["props"][0])}
           />
         );
       })}

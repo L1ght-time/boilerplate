@@ -1,11 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DialogProps } from "@radix-ui/react-dialog";
 import { useFieldArray, useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useToggle } from "react-use";
 import z from "zod";
+import { useModalsStore } from "~/store/client/modals-store";
 import { useTableDataStore } from "~/store/client/table-data-store";
 import { Autocomplete } from "~/views/components/fields/autocomplete";
 import { InputField } from "~/views/components/fields/text-field";
@@ -30,10 +32,18 @@ const filtersSchema = z.object({
 
 type FiltersSchemaType = z.infer<typeof filtersSchema>;
 
-export const DataTableFiltersSheet = () => {
-  const [open, setOpen] = useToggle(true);
+type DataTableFiltersSheetProps = DialogProps & {
+  id: string;
+};
 
-    const columns = useTableDataStore((state) => state.columns);
+export const DataTableFiltersSheet = (props: DataTableFiltersSheetProps) => {
+  const { id } = props;
+
+  const modals = useModalsStore((state) => state.modals);
+
+  const [open, toggleOpen] = useToggle(!!modals[id]);
+
+  const columns = useTableDataStore((state) => state.columns);
 
   const form = useForm<FiltersSchemaType>({
     resolver: zodResolver(filtersSchema),
@@ -57,12 +67,8 @@ export const DataTableFiltersSheet = () => {
     console.log(data);
   };
 
-  // const filteredColumns = columns.filter(
-  //   (column) => form
-  // );
-
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={toggleOpen}>
       <SheetContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

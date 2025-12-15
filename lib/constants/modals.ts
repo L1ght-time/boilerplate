@@ -2,15 +2,17 @@ import { DataTableFiltersSheet } from "~/views/modals/sheets/data-table-filters-
 
 export const modalTypes = {
   dataTableFiltersSheet: "dataTableFiltersSheet",
+  test: "test",
 } as const;
 
 export type ModalType = keyof typeof modalTypes;
 
 export const modalsComponents = {
   [modalTypes.dataTableFiltersSheet]: DataTableFiltersSheet,
+  [modalTypes.test]: DataTableFiltersSheet,
 } as const;
 
-export type ModalProps<T extends ModalType = ModalType> = {
-  type: T;
-  props: Parameters<(typeof modalsComponents)[T]>[0];
+export type ModalProps<TModalType extends ModalType = ModalType> = {
+  type: TModalType;
+  props: Parameters<(typeof modalsComponents)[TModalType]>[0];
 };

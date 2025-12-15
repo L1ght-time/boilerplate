@@ -11,22 +11,22 @@ type Modal = ModalProps & {
   id: string;
 };
 
-export type ModalCreateProps = Omit<ModalProps, "props"> & {
+type ModalCreateProps = Omit<ModalProps, "props"> & {
   props: DistributiveOmit<ModalProps["props"], "id">;
 };
 
-export type ModalsState = {
+type ModalsState = {
   modals: {
     [id: string]: Modal;
   };
 };
 
-export type ModalsActions = {
+type ModalsActions = {
   showModal: (modalProps: ModalCreateProps) => Modal;
   hideModalById: (id: string) => void;
 };
 
-export type ModalsStore = ModalsState & ModalsActions;
+type ModalsStore = ModalsState & ModalsActions;
 
 const initialState: ModalsState = {
   modals: {},
@@ -37,11 +37,10 @@ const createModalsStore = (initState: ModalsState = initialState) =>
     ...initState,
     showModal: ({ type, props }) => {
       const id = nanoid();
-
-      const newModal = { ...props, type, id } as Modal;
+      const newModal = { id, type, props } as Modal;
       set((state) => ({
         modals: { ...state.modals, [id]: newModal },
-      }));
+      })); 
       return newModal;
     },
     hideModalById: (id) =>
