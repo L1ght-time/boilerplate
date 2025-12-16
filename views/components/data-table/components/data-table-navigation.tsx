@@ -7,7 +7,6 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useSearchParamsActions } from "~/lib/hooks/use-search-params-actions";
 import { Button } from "~/views/components/ui/button";
 import {
@@ -26,13 +25,12 @@ export const DataTableNavigation = () => {
   const table = useDataTable();
   const searchParams = useSearchParams();
 
-  const [pageSize, setPageSize] = useState(
-    searchParams.get("pageSize") || "10"
-  );
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
 
-  useEffect(() => {
-    set("pageSize", pageSize);
-  }, [pageSize, set]);
+  const handlePageSizeChange = (value: string) => {
+    set("pageSize", value);
+    table.setPageSize(Number(value));
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -75,12 +73,7 @@ export const DataTableNavigation = () => {
         </Button>
       </div>
       <div className="flex items-center space-x-2">
-        <Select
-          onValueChange={(value) => {
-            table.setPageSize(Number(value));
-            setPageSize(value);
-          }}
-        >
+        <Select onValueChange={handlePageSizeChange}>
           <SelectTrigger>
             <SelectValue placeholder={`Show ${pageSize}`} />
           </SelectTrigger>
